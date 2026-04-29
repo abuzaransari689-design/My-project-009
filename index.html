@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Smart Expressway – Intelligent Road Travel{% endblock %}
+
+{% block content %}
+
+<!-- ── Hero Section ──────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">🌐 Cloud-Powered Intelligence</div>
+    <h1 class="hero-title">
+      Smart Expressway<br>
+      <span class="gradient-text">Traveler System</span>
+    </h1>
+    <p class="hero-subtitle">
+      Plan your highway journeys with real-time traffic simulation,
+      instant toll calculation, and emergency reporting — all in one platform.
+    </p>
+    <div class="hero-actions">
+      <a href="{{ url_for('auth.signup') }}" class="btn btn-primary btn-lg">Get Started Free</a>
+      <a href="{{ url_for('auth.login') }}" class="btn btn-outline btn-lg">Login</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="road-animation">
+      <div class="road-lines">
+        <div class="road-line"></div>
+        <div class="road-line"></div>
+        <div class="road-line"></div>
+      </div>
+      <div class="car-icon">🚗</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Feature Cards ─────────────────────────────────────────────── -->
+<section class="features-section">
+  <h2 class="section-title">Everything You Need for Smarter Travel</h2>
+  <div class="features-grid">
+
+    <div class="feature-card">
+      <div class="feature-icon">🗺️</div>
+      <h3>Route Planning</h3>
+      <p>Simulate routes between any two points on the highway network. Get distance, ETA, and traffic conditions instantly.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">💳</div>
+      <h3>Toll Calculator</h3>
+      <p>Know your toll charges before you travel. Transparent pricing at ₹2/km so you can budget your trip accurately.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🚨</div>
+      <h3>Emergency Alerts</h3>
+      <p>Report accidents, breakdowns, or hazards instantly. Alerts are routed to authorities in real time.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>Travel History</h3>
+      <p>Review all your past journeys in one place. Track spending, distances, and routes over time.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">☁️</div>
+      <h3>Cloud Database</h3>
+      <p>All your data is securely stored and available from any device, anytime.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <h3>Secure Login</h3>
+      <p>Your account is protected with industry-standard bcrypt password hashing and session management.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── Stats Banner ──────────────────────────────────────────────── -->
+<section class="stats-banner">
+  <div class="stat-item">
+    <span class="stat-number">10,000+</span>
+    <span class="stat-label">Routes Planned</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number">₹2/km</span>
+    <span class="stat-label">Transparent Tolls</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number">24/7</span>
+    <span class="stat-label">Emergency Support</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number">99.9%</span>
+    <span class="stat-label">Uptime</span>
+  </div>
+</section>
+
+{% endblock %}

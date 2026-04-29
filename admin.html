@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}Admin Panel – Smart Expressway{% endblock %}
+
+{% block content %}
+<div class="admin-page">
+
+  <div class="dash-header">
+    <div>
+      <h1>⚙️ Admin Panel</h1>
+      <p class="dash-subtitle">System overview and management dashboard</p>
+    </div>
+  </div>
+
+  <!-- ── Stats Overview ─────────────────────────────────────────── -->
+  <div class="stats-grid">
+    <div class="stat-card stat-blue">
+      <div class="stat-icon">👥</div>
+      <div class="stat-info">
+        <span class="stat-num">{{ stats.total_users }}</span>
+        <span class="stat-lbl">Total Users</span>
+      </div>
+    </div>
+    <div class="stat-card stat-green">
+      <div class="stat-icon">🗺️</div>
+      <div class="stat-info">
+        <span class="stat-num">{{ stats.total_routes }}</span>
+        <span class="stat-lbl">Routes Planned</span>
+      </div>
+    </div>
+    <div class="stat-card stat-orange">
+      <div class="stat-icon">🚨</div>
+      <div class="stat-info">
+        <span class="stat-num">{{ stats.total_emergencies }}</span>
+        <span class="stat-lbl">Emergency Reports</span>
+      </div>
+    </div>
+    <div class="stat-card stat-red">
+      <div class="stat-icon">⏳</div>
+      <div class="stat-info">
+        <span class="stat-num">{{ stats.pending_alerts }}</span>
+        <span class="stat-lbl">Pending Alerts</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Users Table ──────────────────────────────────────────────── -->
+  <div class="card">
+    <h2 class="card-title">👥 Registered Users</h2>
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Joined</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td>{{ user['id'] }}</td>
+            <td><strong>{{ user['username'] }}</strong></td>
+            <td>{{ user['email'] }}</td>
+            <td>
+              {% if user['is_admin'] %}
+                <span class="badge badge-admin">Admin</span>
+              {% else %}
+                <span class="badge badge-user">User</span>
+              {% endif %}
+            </td>
+            <td class="date-col">{{ user['created_at'][:10] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Emergency Reports Table ─────────────────────────────────── -->
+  <div class="card">
+    <h2 class="card-title">🚨 Emergency Reports</h2>
+    {% if emergencies %}
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Reported By</th>
+            <th>Location</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Time</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for e in emergencies %}
+          <tr>
+            <td>{{ e['id'] }}</td>
+            <td>{{ e['username'] or 'Guest' }}</td>
+            <td>{{ e['location'] }}</td>
+            <td class="desc-col">{{ e['description'] }}</td>
+            <td>
+              <span class="badge badge-{{ 'resolved' if e['status']=='Resolved' else 'pending' }}">
+                {{ e['status'] }}
+              </span>
+            </td>
+            <td class="date-col">{{ e['created_at'][:16] }}</td>
+            <td>
+              {% if e['status'] == 'Pending' %}
+              <form method="POST" action="{{ url_for('admin.resolve_emergency', report_id=e['id']) }}" style="display:inline;">
+                <button type="submit" class="btn btn-sm btn-success">Resolve</button>
+              </form>
+              {% else %}
+              <span class="text-muted">Done</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      <div class="empty-state"><span class="empty-icon">✅</span><p>No emergency reports yet.</p></div>
+    {% endif %}
+  </div>
+
+  <!-- ── Travel History Table ─────────────────────────────────────── -->
+  <div class="card">
+    <h2 class="card-title">🗺️ All Travel History</h2>
+    {% if routes %}
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>User</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Distance</th>
+            <th>Time</th>
+            <th>Traffic</th>
+            <th>Toll</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in routes %}
+          <tr>
+            <td>{{ r['id'] }}</td>
+            <td>{{ r['username'] }}</td>
+            <td>{{ r['source'] }}</td>
+            <td>{{ r['destination'] }}</td>
+            <td>{{ r['distance_km'] }} km</td>
+            <td>{{ r['travel_time'] }}</td>
+            <td><span class="badge badge-{{ r['traffic'].lower() }}">{{ r['traffic'] }}</span></td>
+            <td>₹{{ r['toll_amount'] }}</td>
+            <td class="date-col">{{ r['created_at'][:10] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      <div class="empty-state"><span class="empty-icon">🗺️</span><p>No travel records yet.</p></div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

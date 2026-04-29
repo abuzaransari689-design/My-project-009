@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block title %}Dashboard – Smart Expressway{% endblock %}
+
+{% block content %}
+<div class="dashboard-page">
+
+  <!-- ── Welcome Header ──────────────────────────────────────────── -->
+  <div class="dash-header">
+    <div>
+      <h1>Welcome back, <span class="gradient-text">{{ session['username'] }}</span> 👋</h1>
+      <p class="dash-subtitle">Plan your route, check tolls, and travel smarter.</p>
+    </div>
+    <a href="{{ url_for('emergency.emergency') }}" class="btn btn-danger">🚨 Report Emergency</a>
+  </div>
+
+  <!-- ── Route Finder Card ────────────────────────────────────────── -->
+  <div class="card route-card">
+    <h2 class="card-title">🗺️ Find Your Route</h2>
+    <form method="POST" action="{{ url_for('dashboard.find_route') }}" class="route-form">
+      <div class="route-inputs">
+        <div class="form-group">
+          <label for="source">📍 Source Location</label>
+          <input
+            type="text"
+            id="source"
+            name="source"
+            placeholder="e.g. Delhi, Agra, Mumbai..."
+            value="{{ result.source if result else '' }}"
+            required
+          />
+        </div>
+
+        <div class="route-arrow">➜</div>
+
+        <div class="form-group">
+          <label for="destination">🏁 Destination</label>
+          <input
+            type="text"
+            id="destination"
+            name="destination"
+            placeholder="e.g. Jaipur, Pune, Chennai..."
+            value="{{ result.destination if result else '' }}"
+            required
+          />
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-lg">Find Route</button>
+    </form>
+  </div>
+
+  <!-- ── Route Results ────────────────────────────────────────────── -->
+  {% if result %}
+  <div class="card results-card animate-in">
+    <h2 class="card-title">📊 Route Analysis</h2>
+
+    <div class="route-summary">
+      <span class="location-tag">{{ result.source }}</span>
+      <span class="route-divider">━━━━━━━━━ 🚗 ━━━━━━━━━</span>
+      <span class="location-tag">{{ result.destination }}</span>
+    </div>
+
+    <div class="results-grid">
+
+      <div class="result-item">
+        <div class="result-icon">📏</div>
+        <div class="result-label">Distance</div>
+        <div class="result-value">{{ result.distance_km }} km</div>
+      </div>
+
+      <div class="result-item">
+        <div class="result-icon">⏱️</div>
+        <div class="result-label">Travel Time</div>
+        <div class="result-value">{{ result.travel_time }}</div>
+      </div>
+
+      <div class="result-item">
+        <div class="result-icon">🚦</div>
+        <div class="result-label">Traffic</div>
+        <div class="result-value traffic-{{ result.traffic.lower() }}">{{ result.traffic }}</div>
+      </div>
+
+      <div class="result-item">
+        <div class="result-icon">🏎️</div>
+        <div class="result-label">Avg Speed</div>
+        <div class="result-value">{{ result.speed_kmh }} km/h</div>
+      </div>
+
+    </div>
+
+    <!-- Toll & Cost Breakdown -->
+    <div class="cost-breakdown">
+      <h3>💳 Cost Breakdown</h3>
+      <div class="cost-table">
+        <div class="cost-row">
+          <span>Toll Charges (₹2/km × {{ result.distance_km }} km)</span>
+          <span class="cost-value">₹{{ result.toll_amount }}</span>
+        </div>
+        <div class="cost-row">
+          <span>Estimated Fuel Cost (₹6/km)</span>
+          <span class="cost-value">₹{{ result.fuel_cost }}</span>
+        </div>
+        <div class="cost-row cost-total">
+          <span>Total Estimated Cost</span>
+          <span class="cost-value">₹{{ result.total_cost }}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  {% endif %}
+
+  <!-- ── Travel History ─────────────────────────────────────────── -->
+  <div class="card history-card">
+    <h2 class="card-title">🕓 Recent Trips</h2>
+    {% if history %}
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>From</th>
+            <th>To</th>
+            <th>Distance</th>
+            <th>Time</th>
+            <th>Traffic</th>
+            <th>Toll</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for trip in history %}
+          <tr>
+            <td>{{ trip['source'] }}</td>
+            <td>{{ trip['destination'] }}</td>
+            <td>{{ trip['distance_km'] }} km</td>
+            <td>{{ trip['travel_time'] }}</td>
+            <td><span class="badge badge-{{ trip['traffic'].lower() }}">{{ trip['traffic'] }}</span></td>
+            <td>₹{{ trip['toll_amount'] }}</td>
+            <td class="date-col">{{ trip['created_at'][:10] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <span class="empty-icon">🗺️</span>
+      <p>No trips yet. Plan your first route above!</p>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}
